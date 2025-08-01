@@ -30,12 +30,12 @@ class CostOfLivingSituation {
         const data = new Uint8Array(arrayBuffer);
         const workbook = XLSX.read(data, { type: 'array' });
         /* grab the first sheet's data as a JSON array */
-        return XLSX.utils.sheet_to_json(workbook.Sheets[workbookSheetNames[0]]);
+        return XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]]);
     }
 
     async get_values() {
 
-        this.folks = AGE_CATEGORIES.map(
+        this.folks = this.age_categories.map(
             (element_id) =>
                 parseInt(document.getElementById(element_id).value)
         );
@@ -53,22 +53,20 @@ class CostOfLivingSituation {
 
         for (let i = 1; i < sheetData.length - 1; i++) {
             let cost_by_size = sheetData[i][1];
-            for (let j = 0; j < folks.length; j++) {
-                cost_by_size += sheetData[i][j + 2] * folks[j];
+            for (let j = 0; j < this.folks.length; j++) {
+                cost_by_size += sheetData[i][j + 2] * this.folks[j];
             }
             this.family_cost[sheetData[i][0]] = cost_by_size;
         }
 
-        this.family_cost["housing_cost"] = await read_housing_plans();
-        this.family_cost["food_cost"] = await read_food_plans();
-
-        this.family_cost = family_cost_json;
+        this.family_cost["housing_cost"] = await this.read_housing_plans();
+        this.family_cost["food_cost"] = await this.read_food_plans();
     }
 
     async read_food_plans() {
         const food_plans_sheetData = await this.read_first_sheet(this.food_path);
         const food_row = this.food_plans.indexOf(food_plan) + 1;
-        food_cost = folks.reduce(
+        var food_cost = this.folks.reduce(
             (total, val, j) => {
                 total + food_plans_sheetData[food_row][j + 1] * val
             },
@@ -83,8 +81,8 @@ class CostOfLivingSituation {
     }
 
     async read_housing_plans() {
-        const food_plans_sheetData = await this.read_first_sheet(this.housing_path);
-        let housing_row = this.housing_plans.findIndex(housing_type) + 1;
+        const housing_plans_sheetData = await this.read_first_sheet(this.housing_path);
+        let housing_row = this.housing_plans.indexOf(this.housing_type) + 1;
         let housing_cost = housing_plans_sheetData[housing_row][2];
 
         // console.log(housing_cost)
@@ -93,15 +91,15 @@ class CostOfLivingSituation {
     }
 
     async render() {
-        data = await this.get_values()
+        await this.get_values()
         // console.log("AAA")
         // console.log(Object.values(data))
 
-        let table = {
-            labels: Object.keys(data),
+        const table = {
+            labels: Object.keys(this.family_cost),
             datasets: [{
                 label: 'Monthly Costs ($)',
-                data: Object.values(data)
+                data: Object.values(this.family_cost)
             }]
         }
 
@@ -128,7 +126,7 @@ const sitch = new CostOfLivingSituation(
         "coefficients",
         "food_costs",
         "food_plans_means",
-        "housing_costs"
+        "housing_cost"
     ],
     [
         "adults",
@@ -144,7 +142,7 @@ const sitch = new CostOfLivingSituation(
         "Moderate",
         "Liberal"
     ],
-    "data/housing_costs.xlsx",
+    "data/housing_cost.xlsx",
     [
         "Efficiency",
         "One_Bedroom",
