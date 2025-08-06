@@ -9,6 +9,11 @@ body {
 
 h1 {
   color: #333;
+  margin-bottom: 5px;
+}
+
+h3 {
+  margin-top: 0px;
 }
 
 label {
@@ -44,4 +49,16 @@ canvas {
 
 .graph{
   width: 100vw;
+}
+
+.cost_container{
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+
+}
+
+.cost_container div{
+  padding: 5px;
 }

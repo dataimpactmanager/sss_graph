@@ -1,9 +1,14 @@
 let sheetData = []
 let no_adults, no_infants, no_preschoolers, no_schoolagers, no_teenagers, housing_type, food_plan = 0;
-let food_cost = 0
+let total_monthly_cost = 0;
+let food_cost = 0;
 let family_cost = []
 let chart;
 
+/**
+ * Retrieves values from the DOM input fields and triggers reading of coefficients.
+ * @returns {Promise<Object>} Promise resolving to the family cost object.
+ */
 function get_values(){
 
     no_adults = parseInt(document.getElementById('adults').value)
@@ -21,6 +26,10 @@ function get_values(){
 }
 
 
+/**
+ * Reads coefficients from the Excel file and calculates family costs.
+ * @returns {Promise<Object>} Promise resolving to the family cost object.
+ */
 async function readCoefficients() {
     const response = await fetch('data/coefficients.xlsx');
     const arrayBuffer = await response.arrayBuffer();
@@ -55,6 +64,10 @@ async function readCoefficients() {
 }
 
 
+/**
+ * Reads food plan costs from the Excel file and calculates total food cost.
+ * @returns {Promise<number>} Promise resolving to the calculated food cost.
+ */
 async function read_food_plans() {
     const response = await fetch('data/food_costs.xlsx');
     const arrayBuffer = await response.arrayBuffer();
@@ -104,6 +117,10 @@ async function read_food_plans() {
     return food_cost
 }
 
+/**
+ * Reads housing plan costs from the Excel file and returns the selected housing cost.
+ * @returns {Promise<number>} Promise resolving to the calculated housing cost.
+ */
 async function read_housing_plans() {
     const response = await fetch('data/housing_cost.xlsx');
     const arrayBuffer = await response.arrayBuffer();
@@ -135,11 +152,35 @@ async function read_housing_plans() {
     return housing_cost;
 }
 
+/**
+ * Calculates the total monthly cost from the provided data object.
+ * @param {Object} data - Object containing cost values.
+ * @returns {Promise<number>} Promise resolving to the total monthly cost.
+ */
+async function get_total_monthly_cost(data){
+    let costs = Object.values(data).map(Number); 
 
+    return costs.reduce((sum, value) => sum + value, 0);
+
+}
+
+
+/**
+ * Gathers input values, calculates costs, updates the DOM, and renders the chart.
+ * @returns {Promise<void>}
+ */
 async function make_table(){
+    
     data = await get_values()
-    // console.log("AAA")
-    // console.log(Object.values(data))
+    total_monthly_cost = (await get_total_monthly_cost(data));
+
+    (document.getElementById('yearly_cost_div').innerHTML = ((total_monthly_cost * 12)).toFixed(2)).toLocaleString('en');
+    (document.getElementById('monthly_cost_div').innerHTML = total_monthly_cost.toFixed(2)).toLocaleString('en');
+
+    // Asuming 40 hours of work per week
+    // On average there's 4 weeks and 2 days in a month, so 4.34524 weeks
+    (document.getElementById('hourly_cost_div').innerHTML = ((total_monthly_cost / 4.34524) / 40).toFixed(2)).toLocaleString('en');
+
 
     let table = {
     labels: Object.keys(data),

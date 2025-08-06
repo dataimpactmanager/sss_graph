@@ -10,6 +10,7 @@
 <body>
      <div class="graph-panel"> 
   <h1>Family Cost Calculator</h1>
+  <h3>Racine County</h3>
    
 
    
@@ -42,8 +43,21 @@
     <button type="button" onclick="make_table()">Generate Graph</button>
   </form>
    </div>
+   
 
 <div class="graph">
+ <div class="cost_container">
+   <div class="yearly">
+    Cost per Year:  <div id="yearly_cost_div">0</div>
+   </div>
+   <div class="monthly">
+    Cost per Month:  <div id="monthly_cost_div">0</div>
+   </div>
+   <div class="hourly">
+    Cost per Hour:  <div id="hourly_cost_div">0</div>
+   </div>
+ </div>
+
   <canvas id="myChart"></canvas>
 </div>
 
