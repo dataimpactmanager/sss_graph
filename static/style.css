@@ -7,6 +7,10 @@ body {
   
 }
 
+.graph-panel{
+  display: flex;
+}
+
 h1 {
   color: #333;
 }
@@ -44,4 +48,17 @@ canvas {
 
 .graph{
   width: 100vw;
+}
+
+
+.cost_container{
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+
+}
+
+.cost_container div{
+  padding: 5px;
 }
