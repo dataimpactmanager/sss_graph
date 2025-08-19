@@ -33,7 +33,7 @@ class CostOfLivingSituation {
 
         // console.log(workbook)
         // console.log(XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]]))
-        return XLSX.utils.sheet_to_json(workbook.Sheets[0], {header:1});
+        return XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]]);
     }
 
     async get_values() {
